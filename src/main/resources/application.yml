@@ -1,7 +1,10 @@
+spring:
+  application:
+    name: member
+
 ---
 spring:
   profiles: local
-  application:    name: member
 
 server:
   port: 8763
