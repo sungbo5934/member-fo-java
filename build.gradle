@@ -55,5 +55,7 @@ dependencyManagement {
 }
 
 test {
+
+	//@Disabled 를 붙이면 그래들이 실행하지않음
 	useJUnitPlatform()
 }

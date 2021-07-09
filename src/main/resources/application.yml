@@ -9,6 +9,13 @@ spring:
 server:
   port: 8763
 
+aws:
+   credential:
+      accessKey: testAccessKey
+      secretKey: testSecretKey
+   endpoint: http://localhost:${server.port}
+   region: ap-northeast​-2
+
 eureka:
   instance:
     prefer-ip-address: true # 서비스간 통신 시 hostname 보다 ip 를 우선 사용 여부
