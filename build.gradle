@@ -27,8 +27,11 @@ ext {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	
+	//zuul
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'  
 	
 	// bom : aws sdk 모듈간 버전충돌을 방지해주는 버전 관리
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-bom', version: awsSdkVersion, ext: 'pom'
@@ -41,6 +44,7 @@ dependencies {
 	implementation group: 'org.slf4j', name: 'jcl-over-slf4j'
 	implementation group: 'ch.qos.logback', name: 'logback-classic'
 	implementation group: 'ch.qos.logback', name: 'logback-core'
+	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

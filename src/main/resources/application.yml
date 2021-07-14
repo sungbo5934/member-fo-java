@@ -9,10 +9,13 @@ spring:
 server:
   port: 8763
 
+message:
+   cacheSecond: 60
+
 aws:
    credential:
-      accessKey: testAccessKey
-      secretKey: testSecretKey
+      accessKey: AKIASY4N752BIFONDGOR
+      secretKey: 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 
    endpoint: http://localhost:${server.port}
    region: ap-northeast​-2
 
