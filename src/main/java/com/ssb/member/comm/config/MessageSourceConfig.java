@@ -18,28 +18,12 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
-public class MessageSourceConfig implements WebMvcConfigurer{
+public class MessageSourceConfig{
 	
 	@Value("${message.cacheSecond}")
 	private int messageCacheSecond;
 	
 	private String localeKey = "lang";
-	
-	@Bean
-	public LocaleResolver localeResolver() {
-		var resolver = new CookieLocaleResolver();
-		resolver.setDefaultLocale(Locale.KOREA);
-		resolver.setCookieName(localeKey);
-		
-		return resolver;
-	}
-	
-	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
-		var lci = new LocaleChangeInterceptor();
-		lci.setParamName(localeKey);
-		return lci;
-	}
 	
 	
 	@Bean
@@ -77,9 +61,4 @@ public class MessageSourceConfig implements WebMvcConfigurer{
 		return bean;
 	}
 	
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
-	}
-
 }
