@@ -2,20 +2,29 @@ package com.ssb.member.login.controller;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssb.apigateway.comm.constant.ApiGatewayConstant;
+import com.ssb.apigateway.comm.util.JwtHelper;
+import com.ssb.member.comm.constant.MemberResCodeConstants;
+import com.ssb.member.comm.model.MemberResponseEntity;
+import com.ssb.member.login.exception.LoginFailException;
 import com.ssb.member.login.model.MeberVO;
 import com.ssb.member.login.service.LoginService;
 
@@ -31,20 +40,28 @@ public class LoginController {
 
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> loginMember(@RequestBody @Valid MeberVO meberVo, BindingResult bindingResult) throws Exception{
+	public ResponseEntity<?> loginMember(@RequestBody @Valid MeberVO meberVo, BindingResult bindingResult, HttpServletResponse response) throws Exception{
 		
 		if(bindingResult.hasErrors()) {
-			return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_GATEWAY);
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+					.body(new MemberResponseEntity(MemberResCodeConstants.ERROR.getResultCode(),MemberResCodeConstants.ERROR.getResultMsg(), bindingResult.getAllErrors()));
 		}
 		
 		MeberVO loginMember = loginService.loginChk(meberVo);
-		if(loginMember == null) {
-			bindingResult.addError(new ObjectError("login", messageSource.getMessage("member.login.fail")));
-			return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_GATEWAY);
-		}
 		
-		return new ResponseEntity<>(meberVo, HttpStatus.OK);
+		//jwtHelper.createToken(ApiGatewayConstant.TOKEN_LOGIN_TYPE.getValue(), null)
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new MemberResponseEntity(MemberResCodeConstants.SUCCESS.getResultCode(), MemberResCodeConstants.SUCCESS.getResultMsg(), null));
 	}
 	
+	@ExceptionHandler({LoginFailException.class})
+	public ResponseEntity<?> loginFailException(final LoginFailException ex, BindingResult bindingResult){
+		
+		bindingResult.addError(new ObjectError("login", messageSource.getMessage("member.login.fail")));
+		
+		return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+				.body(new MemberResponseEntity(MemberResCodeConstants.ERROR.getResultCode(), ex.getMessage(), bindingResult.getAllErrors()));
+	}
 
 }

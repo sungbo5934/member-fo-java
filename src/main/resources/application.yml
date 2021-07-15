@@ -16,8 +16,10 @@ aws:
    credential:
       accessKey: AKIASY4N752BIFONDGOR
       secretKey: 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 
-   endpoint: http://localhost:${server.port}
+   endpoint: http://localhost:8000
    region: ap-northeast​-2
+   dynamodb:
+      memberTbl: local_member
 
 eureka:
   instance:
@@ -26,6 +28,8 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+      
+      
 ---
 spring:
   profiles: dev
