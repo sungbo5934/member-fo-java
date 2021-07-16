@@ -23,8 +23,6 @@ public class MessageSourceConfig{
 	@Value("${message.cacheSecond}")
 	private int messageCacheSecond;
 	
-	private String localeKey = "lang";
-	
 	
 	@Bean
 	public MessageSource messageSource() {

@@ -2,6 +2,7 @@ package com.ssb.member.login.controller;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -40,8 +41,10 @@ public class LoginController {
 
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> loginMember(@RequestBody @Valid MeberVO meberVo, BindingResult bindingResult, HttpServletResponse response) throws Exception{
-		
+	public ResponseEntity<?> loginMember(@RequestBody @Valid MeberVO meberVo, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) throws Exception{
+		if(request.getServerPort() == 8764) {
+			Thread.sleep(5000);
+		}
 		if(bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
 					.body(new MemberResponseEntity(MemberResCodeConstants.ERROR.getResultCode(),MemberResCodeConstants.ERROR.getResultMsg(), bindingResult.getAllErrors()));
@@ -52,7 +55,7 @@ public class LoginController {
 		//jwtHelper.createToken(ApiGatewayConstant.TOKEN_LOGIN_TYPE.getValue(), null)
 
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(new MemberResponseEntity(MemberResCodeConstants.SUCCESS.getResultCode(), MemberResCodeConstants.SUCCESS.getResultMsg(), null));
+				.body(new MemberResponseEntity(MemberResCodeConstants.SUCCESS.getResultCode(), MemberResCodeConstants.SUCCESS.getResultMsg(), loginMember));
 	}
 	
 	@ExceptionHandler({LoginFailException.class})
