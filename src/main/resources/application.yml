@@ -16,10 +16,11 @@ aws:
    credential:
       accessKey: AKIASY4N752BIFONDGOR
       secretKey: 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 
-   endpoint: http://localhost:8000
-   region: ap-northeast​-2
+   endpoint: https://dynamodb.ap-northeast-2.amazonaws.com
+   region: ap-northeast-2
    dynamodb:
       memberTbl: local_member
+      memberPartition: memberBase
 
 eureka:
   instance:
@@ -28,8 +29,13 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:8761/eureka/
-      
-      
+
+# hystrix dashboard 설정      
+management:
+   endpoints:
+      web:
+         exposure:
+            include: "*"
 ---
 spring:
   profiles: dev
@@ -39,12 +45,33 @@ spring:
 server:
   port: 8764
 
+message:
+   cacheSecond: 60
+
+aws:
+   credential:
+      accessKey: AKIASY4N752BIFONDGOR
+      secretKey: 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 
+   endpoint: https://dynamodb.ap-northeast-2.amazonaws.com
+   region: ap-northeast-2
+   dynamodb:
+      memberTbl: local_member
+      memberPartition: memberBase
+
 eureka:
   instance:
+    prefer-ip-address: true # 서비스간 통신 시 hostname 보다 ip 를 우선 사용 여부
     hostname: localhost
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+
+# hystrix dashboard 설정      
+management:
+   endpoints:
+      web:
+         exposure:
+            include: "*"
   
 ---
 spring:

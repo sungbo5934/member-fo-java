@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	
 	//zuul
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'  
 	
 	// bom : aws sdk 모듈간 버전충돌을 방지해주는 버전 관리

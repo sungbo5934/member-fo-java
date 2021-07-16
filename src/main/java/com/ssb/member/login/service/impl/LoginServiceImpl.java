@@ -18,6 +18,9 @@ public class LoginServiceImpl implements LoginService{
 	@Value("${aws.dynamodb.memberTbl}")
 	private String memberTbl;
 	
+	@Value("${aws.dynamodb.memberPartition}")
+	private String memberPartition;
+	
 	@Autowired
 	private DynamoDbHelper dynamoDbHelper;
 
@@ -25,12 +28,13 @@ public class LoginServiceImpl implements LoginService{
 	public MeberVO loginChk(MeberVO meberVo) throws Exception {
 		
 		Map<String,AttributeValue> key = new HashMap<String,AttributeValue>();
-		key.put("memberId", new AttributeValue().withS(meberVo.getMemberId()));
-		key.put("pwd", new AttributeValue().withS(meberVo.getPwd()));
+		key.put("member_partition", new AttributeValue().withS(memberPartition));
+		key.put("member_key", new AttributeValue().withS(meberVo.getMemberId()));
 		
 		Map<String,AttributeValue> result = dynamoDbHelper.getItem(memberTbl, key);
+		meberVo.setPwd(result.get("pwd").getS());
 		
-		return null;
+		return meberVo;
 	}
 
 }
