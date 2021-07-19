@@ -1,18 +1,13 @@
 package com.ssb.member.login.controller;
 
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssb.apigateway.comm.constant.ApiGatewayConstant;
-import com.ssb.apigateway.comm.util.JwtHelper;
 import com.ssb.member.comm.constant.MemberResCodeConstants;
 import com.ssb.member.comm.model.MemberResponseEntity;
 import com.ssb.member.login.exception.LoginFailException;
@@ -42,15 +35,13 @@ public class LoginController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> loginMember(@RequestBody @Valid MeberVO meberVo, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) throws Exception{
-		if(request.getServerPort() == 8764) {
-			Thread.sleep(5000);
-		}
+		
 		if(bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
 					.body(new MemberResponseEntity(MemberResCodeConstants.ERROR.getResultCode(),MemberResCodeConstants.ERROR.getResultMsg(), bindingResult.getAllErrors()));
 		}
 		
-		MeberVO loginMember = loginService.loginChk(meberVo);
+		MeberVO loginMember = loginService.loginChk(meberVo, response);
 		
 		//jwtHelper.createToken(ApiGatewayConstant.TOKEN_LOGIN_TYPE.getValue(), null)
 
