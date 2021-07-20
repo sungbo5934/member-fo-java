@@ -2,10 +2,12 @@ package com.ssb.member.login.model;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.ssb.comm.model.CommBaseModel;
+
 import lombok.Data;
 
 @Data
-public class MeberVO {
+public class MeberVO extends CommBaseModel{
 	
 	private String memberNo;
 	
