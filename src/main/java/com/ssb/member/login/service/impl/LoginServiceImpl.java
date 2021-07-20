@@ -1,5 +1,6 @@
 package com.ssb.member.login.service.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,12 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.services.dynamodbv2.document.ItemUtils;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.ssb.comm.constant.CommConstant;
+import com.ssb.comm.constant.CommJwtConstant;
 import com.ssb.comm.helper.JwtHelper;
 import com.ssb.comm.util.EncryptUtil;
+import com.ssb.comm.util.HttpServletUtil;
+import com.ssb.member.comm.constant.MemberCommConstant;
 import com.ssb.member.comm.helper.DynamoDbHelper;
 import com.ssb.member.login.exception.LoginFailException;
 import com.ssb.member.login.model.MeberVO;
@@ -27,34 +32,32 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginServiceImpl implements LoginService{
 	
 	@Autowired
-	private JwtHelper jwtHelper;
+	private HttpServletUtil httpServletUtil;
 	
 	@Autowired
 	private LoginMapper loginMapper;
 	
 	@Value("${aws.dynamodb.memberPartition}")
 	private String memberPartition;
-	
-	private final String encryptAlgorizm = "SHA-256";
 
+	@Autowired
+	private MessageSourceAccessor messageSource;
+	
 	@Override
 	public MeberVO loginChk(MeberVO meberVo, HttpServletResponse response) throws Exception {
 		
-		
 		Map<String, AttributeValue> memberInfo = loginMapper.getMmber(meberVo);
 		
-		String password = EncryptUtil.encrypt(meberVo.getPwd(), encryptAlgorizm);
+		String password = EncryptUtil.encrypt(meberVo.getPwd(), MemberCommConstant.PWD_ENCRYPT_ALGOTIZM.getValue());
 
 		if(StringUtils.equals(memberInfo.get("pwd").getS(), password)) {
 			
-			Map<String, Object> tokenMap = new HashMap<String, Object>();
-			meberVo.setPwd(StringUtils.EMPTY);
-			tokenMap.put(memberPartition, meberVo);
-			jwtHelper.setResLoginToken(response, tokenMap);
+			httpServletUtil.setResLoginToken(response, Collections.singletonMap(memberPartition, ItemUtils.toSimpleMapValue(memberInfo)));
 			
 		}else {
 			
-			throw new LoginFailException("비밀번호 다름");
+			log.info(" 비밀번호 다름 ");
+			throw new LoginFailException(messageSource.getMessage("member.login.fail"));
 			
 		}
 		

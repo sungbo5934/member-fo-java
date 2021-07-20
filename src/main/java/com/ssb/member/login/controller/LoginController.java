@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssb.member.comm.constant.MemberResCodeConstants;
+import com.ssb.comm.constant.CommResponseConstant;
 import com.ssb.member.comm.model.MemberResponseEntity;
 import com.ssb.member.login.exception.LoginFailException;
 import com.ssb.member.login.model.MeberVO;
@@ -38,7 +38,7 @@ public class LoginController {
 		
 		if(bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-					.body(new MemberResponseEntity(MemberResCodeConstants.ERROR.getResultCode(),MemberResCodeConstants.ERROR.getResultMsg(), bindingResult.getAllErrors()));
+					.body(new MemberResponseEntity(CommResponseConstant.ERROR.getResultCode(),CommResponseConstant.ERROR.getResultMsg(), bindingResult.getAllErrors()));
 		}
 		
 		MeberVO loginMember = loginService.loginChk(meberVo, response);
@@ -46,16 +46,16 @@ public class LoginController {
 		//jwtHelper.createToken(ApiGatewayConstant.TOKEN_LOGIN_TYPE.getValue(), null)
 
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(new MemberResponseEntity(MemberResCodeConstants.SUCCESS.getResultCode(), MemberResCodeConstants.SUCCESS.getResultMsg(), loginMember));
+				.body(new MemberResponseEntity(CommResponseConstant.SUCCESS.getResultCode(), CommResponseConstant.SUCCESS.getResultMsg(), loginMember));
 	}
 	
-	@ExceptionHandler({LoginFailException.class})
+	@ExceptionHandler(LoginFailException.class)
 	public ResponseEntity<?> loginFailException(final LoginFailException ex, BindingResult bindingResult){
 		
 		bindingResult.addError(new ObjectError("login", messageSource.getMessage("member.login.fail")));
 		
 		return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-				.body(new MemberResponseEntity(MemberResCodeConstants.ERROR.getResultCode(), ex.getMessage(), bindingResult.getAllErrors()));
+				.body(new MemberResponseEntity(CommResponseConstant.ERROR.getResultCode(), ex.getMessage(), bindingResult.getAllErrors()));
 	}
 
 }
