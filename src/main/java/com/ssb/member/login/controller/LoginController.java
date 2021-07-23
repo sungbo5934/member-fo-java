@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssb.comm.constant.CommResponseConstant;
 import com.ssb.member.comm.model.MemberResponseEntity;
 import com.ssb.member.login.exception.LoginFailException;
-import com.ssb.member.login.model.MeberVO;
+import com.ssb.member.login.model.MemberVO;
 import com.ssb.member.login.service.LoginService;
 
 @RestController
@@ -34,14 +34,14 @@ public class LoginController {
 
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> loginMember(@RequestBody @Valid MeberVO meberVo, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) throws Exception{
+	public ResponseEntity<?> loginMember(@RequestBody @Valid MemberVO meberVo, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) throws Exception{
 		
 		if(bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
 					.body(new MemberResponseEntity(CommResponseConstant.ERROR.getResultCode(),CommResponseConstant.ERROR.getResultMsg(), bindingResult.getAllErrors()));
 		}
 		
-		MeberVO loginMember = loginService.loginChk(meberVo, response);
+		MemberVO loginMember = loginService.loginChk(meberVo, response);
 		
 		//jwtHelper.createToken(ApiGatewayConstant.TOKEN_LOGIN_TYPE.getValue(), null)
 
