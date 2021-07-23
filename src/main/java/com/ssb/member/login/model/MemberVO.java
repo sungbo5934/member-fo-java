@@ -7,7 +7,7 @@ import com.ssb.comm.model.CommBaseModel;
 import lombok.Data;
 
 @Data
-public class MeberVO extends CommBaseModel{
+public class MemberVO extends CommBaseModel{
 	
 	private String memberNo;
 	

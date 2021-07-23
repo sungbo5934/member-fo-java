@@ -21,7 +21,7 @@ import com.ssb.comm.util.HttpServletUtil;
 import com.ssb.member.comm.constant.MemberCommConstant;
 import com.ssb.member.comm.helper.DynamoDbHelper;
 import com.ssb.member.login.exception.LoginFailException;
-import com.ssb.member.login.model.MeberVO;
+import com.ssb.member.login.model.MemberVO;
 import com.ssb.member.login.service.LoginService;
 import com.ssb.member.sample.mapper.LoginMapper;
 
@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService{
 	private MessageSourceAccessor messageSource;
 	
 	@Override
-	public MeberVO loginChk(MeberVO meberVo, HttpServletResponse response) throws Exception {
+	public MemberVO loginChk(MemberVO meberVo, HttpServletResponse response) throws Exception {
 		
 		Map<String, AttributeValue> memberInfo = loginMapper.getMmber(meberVo);
 		
