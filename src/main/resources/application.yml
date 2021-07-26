@@ -24,6 +24,7 @@ aws:
 
 eureka:
   instance:
+    registry-fetch-interval-second: 1000 # 클라이언트 측에서 eureka registry를 캐싱하는 시간
     prefer-ip-address: true # 서비스간 통신 시 hostname 보다 ip 를 우선 사용 여부
     hostname: localhost
   client:

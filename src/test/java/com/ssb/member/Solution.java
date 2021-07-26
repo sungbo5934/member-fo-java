@@ -4,6 +4,7 @@ package com.ssb.member;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class Solution {
 	
 	public int[] 가장큰수(int[] array, int[][] commands) {
@@ -103,37 +104,39 @@ public class Solution {
         
         return answer;
     }
-
+	public String replaceAll (String ori,String rex) {
+		String replace = ori.replaceAll(rex, ",").replaceAll("[,]{2,}", ",").replaceAll("^[,]", "").replaceAll("[,]$", "");
+		return replace;
+	}
 	
-	public static int[] solution(int N, int[] stages) {
-        int[] answer = new int[N];
-        
-        Map<Integer, Double> map = new HashMap<Integer,Double>();
-        for(int i = 0 ; i < answer.length; i++) {
-        	int j = i + 1;
-        	int child = Arrays.stream(stages).filter((data) -> data == j ).toArray().length;
-        	int parent = Arrays.stream(stages).filter((data) -> data >= j ).toArray().length;
-        	double persent = (double) child / (double)parent ;
-        	map.put(j, parent == 0 ? 0 :  persent);
+	public static int solution(int numInt) {
+        int answer = 0;
+        long num = (long)numInt;
+        while(true) {
         	
-        }
-    	List<Map.Entry<Integer, Double>> list = map.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect(Collectors.toList());
-    	for(int i = 0 ; i < answer.length ; i++) {
-        	answer[i] = list.get(i).getKey();
+        	if(num == 1) {
+        		break;
+        	}else if(answer == 500) {
+        		answer = -1;
+        		break;
+    		}
+        	
+        	if(num % 2 == 0 ) {
+        		num /= 2;
+        		answer++;
+            }else {
+            	num = num * 3 + 1;
+            	answer++;
+            }
         }
         return answer;
     }
-
-	
+	 
 	public static void main(String[] phone_book) {
-		Integer[] lottos = {44, 1, 0, 0, 31, 25};
-		int[] stages = {2, 1, 2, 6, 2, 4, 3, 3};
-		solution(11, stages);
-		Map<Integer, Integer> map = new HashMap<>();
-		map.put(2, 1020);
-		map.put(5, 300);
-		map.put(1, 100);
-		map.put(3, 300);
+		int[] stages1 = {46, 33, 33 ,22, 31, 50};
+		int[] stages2 = {27 ,56, 19, 14, 14, 10};
+		System.out.println(solution(626331));
+		//solution(6, stages1, stages2);
         
 	}
 	
