@@ -5,15 +5,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.amazonaws.services.dynamodbv2.document.ItemUtils;
 import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssb.member.comm.helper.DynamoDbHelper;
 import com.ssb.member.join.model.MemberJoinVO;
 
@@ -25,14 +28,15 @@ public class JoinMapper {
 	@Autowired
 	private DynamoDbHelper ddbHelper;
 
-	public List<MemberJoinVO> selectMember(MemberJoinVO memberVo) throws Exception{
+	public List<Map<String, Object>> selectMember(MemberJoinVO memberVo) throws Exception{
 		List<MemberJoinVO> memberList = new ArrayList<MemberJoinVO>();
 		
 		Map<String,Condition> keyCondition = new HashMap<String,Condition>();
+		//memberNm
 		keyCondition.put("memberNm", new Condition().withAttributeValueList(new AttributeValue().withS(memberVo.getMemberNm())).withComparisonOperator(ComparisonOperator.EQ));
-		
-		List<Map<String, AttributeValue>> requestList = ddbHelper.queryItems(keyCondition);
-		return null;
+		List<Map<String, AttributeValue>> resultList = ddbHelper.queryItemsGsi(keyCondition, "member_partition-memberNm-index");
+
+		return resultList.stream().map(data -> ItemUtils.toSimpleMapValue(data)).collect(Collectors.toList());
 	}
 
 	public void joinMember(MemberJoinVO memberVo) throws Exception{

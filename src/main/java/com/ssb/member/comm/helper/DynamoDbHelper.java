@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
@@ -73,6 +74,17 @@ public class DynamoDbHelper {
 								.withTableName(memberTbl)
 								.withKeyConditions(keyCondition)
 								.withIndexName("member_partition-memberNm-index");
+		QueryResult result = ddb.query(queryRequest);
+		return result.getItems();
+	}
+	
+	/** 사용 가능 오퍼레이션 : EQ | LE | LT | GE | GT | BEGINS_WITH | BETWEEN **/
+	public List<Map<String, AttributeValue>> queryItemsGsi(Map<String,Condition> keyCondition, String indexNm) throws Exception{
+		initQuery(keyCondition);
+		QueryRequest queryRequest = new QueryRequest()
+								.withTableName(memberTbl)
+								.withKeyConditions(keyCondition)
+								.withIndexName(indexNm);
 		QueryResult result = ddb.query(queryRequest);
 		return result.getItems();
 	}
