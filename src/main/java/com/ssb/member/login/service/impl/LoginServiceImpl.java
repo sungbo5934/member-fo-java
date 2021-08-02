@@ -10,12 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.dynamodbv2.document.ItemUtils;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.ssb.comm.constant.CommJwtConstant;
 import com.ssb.comm.helper.JwtHelper;
+import com.ssb.comm.helper.RedisHelper;
 import com.ssb.comm.util.EncryptUtil;
 import com.ssb.comm.util.HttpServletUtil;
 import com.ssb.member.comm.constant.MemberCommConstant;
@@ -35,10 +38,16 @@ public class LoginServiceImpl implements LoginService{
 	private HttpServletUtil httpServletUtil;
 	
 	@Autowired
+	private RedisHelper redisHelper;
+	
+	@Autowired
 	private LoginMapper loginMapper;
 	
 	@Value("${aws.dynamodb.memberPartition}")
 	private String memberPartition;
+	
+	@Value("${redis.key.member}")
+	private String redisKey;
 
 	@Autowired
 	private MessageSourceAccessor messageSource;
@@ -51,6 +60,8 @@ public class LoginServiceImpl implements LoginService{
 		String password = EncryptUtil.encrypt(meberVo.getPwd(), MemberCommConstant.PWD_ENCRYPT_ALGOTIZM.getValue());
 
 		if(StringUtils.equals(memberInfo.get("pwd").getS(), password)) {
+			
+			redisHelper.setHash(redisKey, meberVo.getMemberId(), ItemUtils.toSimpleMapValue(memberInfo));
 			
 			httpServletUtil.setResLoginToken(response, Collections.singletonMap(memberPartition, ItemUtils.toSimpleMapValue(memberInfo)));
 			

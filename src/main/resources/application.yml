@@ -11,7 +11,11 @@ server:
 
 message:
    cacheSecond: 60
-
+   
+redis: 
+   key: 
+      member: member
+      
 aws:
    credential:
       accessKey: AKIASY4N752BIFONDGOR

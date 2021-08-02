@@ -5,138 +5,90 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+
 public class Solution {
 	
-	public int[] 가장큰수(int[] array, int[][] commands) {
-        int[] answer = {};
-        answer =  new int[commands.length];
-        for(int l = 0 ; l  < commands.length ; l++) {
-        	int i = commands[l][0]; //2
-        	int j = commands[l][1]; //5
-        	int k = commands[l][2]; //3
-        	int length = j - i + 1;
-        	int[] arr = new int[length];
-        	for(int h = 0 ; h < length ; h++) {
-        		arr[h] = array[h + i - 1];
-        	}
-        	
-        	Arrays.sort(arr);
-        	answer[l] = arr[k -1];
-        	
-        }
-        
-        return answer;
-    }
-	public int gety(int number) {
+	static int[] distance;
+	
+	public static class Node{
+		int x;
+		int k;
+		List<Integer> before = new ArrayList<Integer>();
 		
-		if(number >= 1 && number <= 3) {
-			return 3;
-		}else if(number >= 4 && number <= 6) {
-			return 2;
-		}else if(number >= 7 && number <= 9) {
-			return 1;
-		}else {
-			return 0;
+		public Node(int x, int k) {
+			this.x =x;
+			this.k =k;
+		}
+		
+		public Node(int x, int k, int before) {
+			this.x =x;
+			this.k =k;
+			this.before.add(before);
 		}
 	}
 	
-	public int getx(int number) {
-		
-		if(number >= 1 && number <= 3) {
-			return number - 1;
-		}else if(number >= 4 && number <= 6) {
-			return number - 4;
-		}else if(number >= 7 && number <= 9) {
-			return number - 7;
-		}else {
-			return 1;
-		}
-	}
 	
-	public String solution2(int[] numbers, String hand) {
-
-        String answer = "";
-        int leftx = 0;
-        int lefty = 0;
-        int rightx = 2;
-        int righty = 0;
-        
-
-        
-        Boolean moveHand = null;
-        //true 왼손
-        //flase 오른손
-        for(int number : numbers) {
-        	if(number == 1 || number == 4 || number == 7) {
-        		moveHand = true;
-        	}else if(number == 3 || number == 6 || number == 9) {
-        		moveHand = false;
-        	}else {
-        		int curx = getx(number); 
-        		int cury = gety(number); 
-        		int totlaLeft = Math.abs(curx - leftx) + Math.abs(cury - lefty);
-        		int totlaright = Math.abs(curx - rightx) + Math.abs(cury - righty);
-        		if(totlaLeft > totlaright) {
-        			moveHand = false;
-        		}else if(totlaLeft < totlaright) {
-        			moveHand = true;
-        		}else {
-        			if(hand.equals("right")) {
-        				moveHand = false;
-        			}else {
-        				moveHand = true;
-        			}
-        		}
-        		
-        	}
-        	
-        	if(moveHand) {
-        		answer += "L";
-        		leftx = getx(number);
-        		lefty = gety(number); 
-        	}else {
-        		answer += "R";
-        		rightx = getx(number);
-        		righty = gety(number); 
-        	}
+	public static int solution(int N, int[][] road, int K) {
+		int answer = 0 ;
+		distance = new int[N+1];
+		Arrays.fill(distance, Integer.MAX_VALUE);
+		distance[1] = 0;
+        Set<Integer> set = new HashSet<Integer>();
+        Map<Integer, List<Node>> map = new HashMap<Integer, List<Node>>();
+        Queue<Node> que = new LinkedList<Node>();
+        for(int[] arr : road) {
+        	List<Node> list = map.getOrDefault(arr[0], new ArrayList<Node>());
+        	list.add(new Node(arr[1], arr[2]));
+    		map.put(arr[0], list);
+    		
+    		List<Node> deflist = map.getOrDefault(arr[1], new ArrayList<Node>());
+    		deflist.add(new Node(arr[0], arr[2]));
+    		map.put(arr[1], deflist);
+    		
         }
         
+        que.add(new Node(1, 0));
+        set.add(1);
         
-        return answer;
-    }
-	public String replaceAll (String ori,String rex) {
-		String replace = ori.replaceAll(rex, ",").replaceAll("[,]{2,}", ",").replaceAll("^[,]", "").replaceAll("[,]$", "");
-		return replace;
-	}
-	
-	public static int solution(int numInt) {
-        int answer = 0;
-        long num = (long)numInt;
-        while(true) {
+        while(!que.isEmpty()) {
+        	Node node = que.poll();
+        	List<Node> nodeList = map.get(node.x);
+        	if(nodeList != null) {
+        		for(Node list : nodeList) {
+        			int x =list.x;
+        			int weight = list.k + node.k;
+            		if(distance[x] > weight) {
+            			distance[x] = weight;
+            			que.add(new Node(x, weight));
+            		}
+            	}
+        	}
         	
-        	if(num == 1) {
-        		break;
-        	}else if(answer == 500) {
-        		answer = -1;
-        		break;
-    		}
-        	
-        	if(num % 2 == 0 ) {
-        		num /= 2;
+        }
+        
+        for(int dis : distance) {
+        	if(dis <= K) {
         		answer++;
-            }else {
-            	num = num * 3 + 1;
-            	answer++;
-            }
+        	}
         }
+        
         return answer;
     }
-	 
-	public static void main(String[] phone_book) {
-		int[] stages1 = {46, 33, 33 ,22, 31, 50};
-		int[] stages2 = {27 ,56, 19, 14, 14, 10};
-		System.out.println(solution(626331));
-		//solution(6, stages1, stages2);
+	
+	public static void main(String[] phone_book)throws Exception {
+		//int[] stages1 = {1, 2, 3, 9, 10, 12};
+		//int[] stages2 = {27 ,56, 19, 14, 14, 10};
+		int[] stages ={1,10,};
+		int[] stages1 ={2, 1, 3, 2};
+		int[][] stages2 = {{1, 1, 1, 0}, {1, 2, 2, 0}, {1, 0, 0, 1}, {0, 0, 0, 1}, {0, 0, 0, 3}, {0, 0, 0, 3}};
+		String[] str1 = {"java backend junior pizza 150","python frontend senior chicken 210","python frontend senior chicken 150","cpp backend senior pizza 260","java backend junior chicken 80","python backend senior chicken 50"};
+		String[] str2 = {"java and backend and junior and pizza 100","python and frontend and senior and chicken 200","cpp and - and senior and pizza 250","- and backend and senior and - 150","- and - and - and chicken 100","- and - and - and - 150"};
+		int[][] place = {{1,2,1},{1,3,2},{2,3,2},{3,4,3},{3,5,2},{3,5,3},{5,6,1}};
+		double int1 = 9;
+		double int2 = 18;
+		//System.out.println(8,12);
+		//System.out.println(Math.floor(57345.12891872515));
+		System.out.println(solution(6, place, 4));
         
 	}
 	
