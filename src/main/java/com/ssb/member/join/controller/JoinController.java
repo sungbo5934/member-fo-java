@@ -39,6 +39,11 @@ public class JoinController {
 	@PostMapping("/join")
 	public ResponseEntity<?> joinMember(@RequestBody @Valid MemberJoinVO memberVo, BindingResult bindingResult ) throws Exception{
 		
+		if(bindingResult.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+					.body(new MemberResponseEntity(CommResponseConstant.ERROR.getResultCode(),CommResponseConstant.ERROR.getResultMsg(), bindingResult.getAllErrors()));
+		}
+		
 		joinService.joinMember(memberVo);
 		
 		return ResponseEntity.status(HttpStatus.OK).build();
@@ -46,6 +51,11 @@ public class JoinController {
 	
 	@PutMapping("/join")
 	public ResponseEntity<?> updateMember(@RequestBody @Valid MemberJoinVO memberVo, BindingResult bindingResult ) throws Exception{
+		
+		if(bindingResult.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+					.body(new MemberResponseEntity(CommResponseConstant.ERROR.getResultCode(),CommResponseConstant.ERROR.getResultMsg(), bindingResult.getAllErrors()));
+		}
 		
 		joinService.updateMember(memberVo);
 		
