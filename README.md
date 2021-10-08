@@ -3,4 +3,4 @@
 2. JWT
 3. REST API
 
-Elastic Serch 및 Vus.js 빨리 
+( 로그인, 인증, 회원가입, 외부연계 회원 정보 제공 )
